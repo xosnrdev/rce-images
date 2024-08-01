@@ -1,18 +1,21 @@
 # RCE Images
 
-
 ## Overview
+
 This module images are the docker images used by [cexaengine.com](https://cexaengine.com) to run code.
 The images are built using nix which are pinned to a specific nixpkgs commit to create reproducible images.
 See the [overview](https://github.com/xosnrdev/carai) on how everything is connected.
 
 #### RCE Runner
+
 The [rce-runner](https://github.com/xosnrdev/rce-runner) is installed in each image which writes the files inside the container, compiles and runs the code and returns the result as a json payload.
 
 #### Images
+
 Prebuilt images can be found on [Docker Hub](https://hub.docker.com/r/xosnrdev).
 
 ## Example
+
 ```bash
 echo '{
   "language": "javascript",
@@ -24,6 +27,7 @@ echo '{
 ```
 
 ##### Result
+
 ```json
-{"stdout":"Hello World!\n","stderr":"","error":""}
+{ "stdout": "Hello World!\n", "stderr": "", "error": "" }
 ```

@@ -1,11 +1,10 @@
-{
-  pkgs,
-  name,
-  tag,
-  installedPackages,
-  run ? "",
-  env ? [],
-  keepContentsDirlinks ? false
+{ pkgs
+, name
+, tag
+, installedPackages
+, run ? ""
+, env ? [ ]
+, keepContentsDirlinks ? false
 }:
 
 let
@@ -52,6 +51,6 @@ pkgs.dockerTools.buildImage {
         env
       ];
 
-    Cmd = [ "${codeRunner}/bin/rce-runner" "--path" "/home/rce"];
+    Cmd = [ "${codeRunner}/bin/rce-runner" "--path" "/home/rce" ];
   };
 }
