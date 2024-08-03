@@ -1,0 +1,147 @@
+name: RCE Runtime Build
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  # paths-filter:
+  #   name: Paths Filter
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     images: ${{ steps.changes.outputs.images }}
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     - name: Check for changes in paths
+  #       uses: dorny/paths-filter@v3
+  #       id: changes
+  #       with:
+  #         base: ${{ github.event.before }}
+  #         filters: |
+  #           images:
+  #             - 'images/**'
+
+  runtime-build-test:
+    name: Runtime Build Test
+    runs-on: ubuntu-latest
+    # needs: paths-filter
+    # if: needs.paths-filter.outputs.images == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up nix
+        uses: cachix/install-nix-action@v27
+        with:
+          nix_path: nixpkgs=channel:nixos-24.05
+          github_access_token: ${{ secrets.GH_TOKEN }}
+
+      - name: Build javascript image
+        run: |
+          nix-build --out-link result/javascript images/javascript.nix
+
+      - name: Set up docker buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run test script
+        run: |
+          docker load -i result/javascript
+
+          output=$(echo '{
+            "language": "javascript",
+            "files": [{
+              "name": "main.js",
+              "content": "console.log(\"Hello World!\");"
+            }]
+          }' | docker run --rm -i --read-only --tmpfs /tmp:rw,noexec,nosuid,size=65536k --tmpfs /home/rce:rw,exec,nosuid,uid=1000,gid=1000,size=131072k -u rce -w /home/rce rce/javascript:latest)
+
+          echo "Output: $output"
+
+          if [[ "$output" == *"Hello World!"* ]]; then
+            echo "Test passed."
+          else
+            echo "Test failed."
+            exit 1
+          fi
+
+  build-images:
+    name: Build Images
+    runs-on: ubuntu-latest
+    needs: runtime-build-test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up nix
+        uses: cachix/install-nix-action@v27
+        with:
+          nix_path: nixpkgs=channel:nixos-24.05
+          github_access_token: ${{ secrets.GH_TOKEN }}
+
+      - name: Run build script
+        run: |
+          chmod +x ./build_all.sh
+          ./build_all.sh
+
+  load-images:
+    name: Load Images
+    runs-on: ubuntu-latest
+    needs: build-images
+
+    steps:
+      - name: Set up docker buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run load script
+        run: |
+          chmod +x ./load_all.sh
+          ./load_all.sh
+
+  push-images:
+    name: Push Images
+    runs-on: ubuntu-latest
+    needs: load-images
+
+    steps:
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-$(basename $image)
+          flavor: |
+            latest=true
+          tags: |
+            type=edge
+            type=sha
+
+      - name: Run push script
+        run: |
+          set -e
+
+          for image in result/*; do
+            name="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-$(basename $image)"
+
+            echo "Pushing $name..."
+            docker push "$name"
+          done

@@ -1,4 +1,6 @@
-# RCE Images
+# RCE Runtime Images
+
+[![Systems Build](https://github.com/xosnrdev/carai/actions/workflows/systems-build.yml/badge.svg)](https://github.com/xosnrdev/carai/actions/workflows/systems-build.yml)
 
 ## Overview
 
