@@ -62,7 +62,7 @@ jobs:
               "name": "main.js",
               "content": "console.log(\"Hello World!\");"
             }]
-          }' | docker run --rm -i --read-only --tmpfs /tmp:rw,noexec,nosuid,size=65536k --tmpfs /home/rce:rw,exec,nosuid,uid=1000,gid=1000,size=131072k -u rce -w /home/rce rce-images/javascript:latest)
+          }' | docker run --rm -i --read-only --tmpfs /tmp:rw,noexec,nosuid,size=65536k --tmpfs /home/rce:rw,exec,nosuid,uid=1000,gid=1000,size=131072k -u rce -w /home/rce rce/javascript:latest)
 
           echo "Output: ${output}"
 
