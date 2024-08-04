@@ -2,7 +2,7 @@ name: Systems Build
 
 on:
   workflow_run:
-    workflows: [Systems Test]
+    workflows: ["Systems Test"]
     types:
       - completed
   workflow_dispatch:
