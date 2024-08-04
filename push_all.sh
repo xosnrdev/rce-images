@@ -2,8 +2,8 @@
 set -e
 
 for image in result/*; do
-	name="xosnrdev/$(basename $image)"
+	name="xosnrdev/$(basename "${image}")"
 
-	echo "Pushing $name..."
-	docker push "$name"
+	echo "Pushing ${name}..."
+	docker push "${name}"
 done

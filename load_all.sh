@@ -3,6 +3,6 @@ set -e
 
 
 for image in result/*; do
-  echo "Loading $image..."
-  docker load -i "$image"
+  echo "Loading ${image}..."
+  docker load -i "${image}"
 done
