@@ -5,5 +5,3 @@ mkdir -p result
 nix-build --out-link result/java images/java.nix
 nix-build --out-link result/javascript images/javascript.nix
 nix-build --out-link result/julia images/julia.nix
-nix-build --out-link result/kotlin images/kotlin.nix
-nix-build --out-link result/lua images/lua.nix
