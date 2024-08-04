@@ -10,7 +10,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce-images/clojure";
+  name = "rce/clojure";
   tag = "latest";
   installedPackages = [
     pkgs.clojure

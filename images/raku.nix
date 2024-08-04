@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce-images/raku";
+  name = "rce/raku";
   tag = "latest";
   installedPackages = [
     pkgs.rakudo

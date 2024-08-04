@@ -58,9 +58,9 @@ jobs:
           for image in result/*; do
             name="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-$(basename "${image}")"
 
-            echo "Pushing $name..."
-            docker tag "${image}" "$name"
-            docker push "$name"
+            echo "Pushing ${name}..."
+            docker tag "${image}" "${name}"
+            docker push "${name}"
           done
 
   build_batch_2:
@@ -105,9 +105,9 @@ jobs:
           for image in result/*; do
             name="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-$(basename "${image}")"
 
-            echo "Pushing $name..."
-            docker tag "${image}" "$name"
-            docker push "$name"
+            echo "Pushing ${name}..."
+            docker tag "${image}" "${name}"
+            docker push "${name}"
           done
 
   build_batch_3:
@@ -152,9 +152,9 @@ jobs:
           for image in result/*; do
             name="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-$(basename "${image}")"
 
-            echo "Pushing $name..."
-            docker tag "${image}" "$name"
-            docker push "$name"
+            echo "Pushing ${name}..."
+            docker tag "${image}" "${name}"
+            docker push "${name}"
           done
 
   build_batch_4:
@@ -199,9 +199,9 @@ jobs:
           for image in result/*; do
             name="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-$(basename "${image}")"
 
-            echo "Pushing $name..."
-            docker tag "${image}" "$name"
-            docker push "$name"
+            echo "Pushing ${name}..."
+            docker tag "${image}" "${name}"
+            docker push "${name}"
           done
 
   build_batch_5:
@@ -246,9 +246,9 @@ jobs:
           for image in result/*; do
             name="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-$(basename "${image}")"
 
-            echo "Pushing $name..."
-            docker tag "${image}" "$name"
-            docker push "$name"
+            echo "Pushing ${name}..."
+            docker tag "${image}" "${name}"
+            docker push "${name}"
           done
 
   build_batch_6:
@@ -293,9 +293,9 @@ jobs:
           for image in result/*; do
             name="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-$(basename "${image}")"
 
-            echo "Pushing $name..."
-            docker tag "${image}" "$name"
-            docker push "$name"
+            echo "Pushing ${name}..."
+            docker tag "${image}" "${name}"
+            docker push "${name}"
           done
 
   build_batch_7:
@@ -340,9 +340,9 @@ jobs:
           for image in result/*; do
             name="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-$(basename "${image}")"
 
-            echo "Pushing $name..."
-            docker tag "${image}" "$name"
-            docker push "$name"
+            echo "Pushing ${name}..."
+            docker tag "${image}" "${name}"
+            docker push "${name}"
           done
 
   build_batch_8:
@@ -387,9 +387,9 @@ jobs:
           for image in result/*; do
             name="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-$(basename "${image}")"
 
-            echo "Pushing $name..."
-            docker tag "${image}" "$name"
-            docker push "$name"
+            echo "Pushing ${name}..."
+            docker tag "${image}" "${name}"
+            docker push "${name}"
           done
 
   build_batch_9:
@@ -434,9 +434,9 @@ jobs:
           for image in result/*; do
             name="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-$(basename "${image}")"
 
-            echo "Pushing $name..."
-            docker tag "${image}" "$name"
-            docker push "$name"
+            echo "Pushing ${name}..."
+            docker tag "${image}" "${name}"
+            docker push "${name}"
           done
 
   build_batch_10:
@@ -481,7 +481,7 @@ jobs:
           for image in result/*; do
             name="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-$(basename "${image}")"
 
-            echo "Pushing $name..."
-            docker tag "${image}" "$name"
-            docker push "$name"
+            echo "Pushing ${name}..."
+            docker tag "${image}" "${name}"
+            docker push "${name}"
           done

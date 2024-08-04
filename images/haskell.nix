@@ -51,7 +51,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce-images/haskell";
+  name = "rce/haskell";
   tag = "latest";
   installedPackages = [
     haskellPackages

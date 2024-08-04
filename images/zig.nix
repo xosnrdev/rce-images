@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce-images/zig";
+  name = "rce/zig";
   tag = "latest";
   installedPackages = [
     pkgs.zig

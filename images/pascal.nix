@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce-images/pascal";
+  name = "rce/pascal";
   tag = "latest";
   installedPackages = [
     pkgs.binutils

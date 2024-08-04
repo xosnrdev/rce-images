@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce-images/mercury";
+  name = "rce/mercury";
   tag = "latest";
   installedPackages = [
     pkgs.mercury

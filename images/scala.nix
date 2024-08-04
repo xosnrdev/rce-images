@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce-images/scala";
+  name = "rce/scala";
   tag = "latest";
   installedPackages = [
     pkgs.scala

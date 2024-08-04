@@ -6,7 +6,7 @@ let
     import ./common/build_image.nix;
 
   pythonPackages =
-    pkgs.python3.withPackages(ps: [
+    pkgs.python3.withPackages (ps: [
       ps.cachetools
       ps.nose
       ps.numpy
@@ -17,7 +17,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce-images/python";
+  name = "rce/python";
   tag = "latest";
   installedPackages = [
     pythonPackages

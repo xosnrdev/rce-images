@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce-images/assembly";
+  name = "rce/assembly";
   tag = "latest";
   installedPackages = [
     pkgs.binutils

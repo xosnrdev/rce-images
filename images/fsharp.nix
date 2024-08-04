@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce-images/fsharp";
+  name = "rce/fsharp";
   tag = "latest";
   installedPackages = [
     pkgs.mono

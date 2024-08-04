@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce-images/idris";
+  name = "rce/idris";
   tag = "latest";
   installedPackages = [
     pkgs.idris2

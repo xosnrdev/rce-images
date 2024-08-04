@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce-images/clang";
+  name = "rce/clang";
   tag = "latest";
   installedPackages = [
     pkgs.clang

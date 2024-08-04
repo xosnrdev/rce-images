@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce-images/dart";
+  name = "rce/dart";
   tag = "latest";
   installedPackages = [
     pkgs.dart

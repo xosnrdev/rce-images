@@ -17,7 +17,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce-images/sac";
+  name = "rce/sac";
   tag = "latest";
   installedPackages = [
     pkgs.gcc

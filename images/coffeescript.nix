@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce-images/coffeescript";
+  name = "rce/coffeescript";
   tag = "latest";
   installedPackages = [
     pkgs.nodePackages.coffee-script

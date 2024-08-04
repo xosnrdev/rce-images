@@ -1,7 +1,7 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? import <nixpkgs> { } }:
 
 pkgs.mkYarnPackage {
-  name = "rce-images-node-modules";
+  name = "rce-node-modules";
   src = ./.;
   packageJSON = ./package.json;
   yarnLock = ./yarn.lock;

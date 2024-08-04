@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce-images/elixir";
+  name = "rce/elixir";
   tag = "latest";
   installedPackages = [
     pkgs.elixir
