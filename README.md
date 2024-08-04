@@ -1,5 +1,6 @@
 # RCE Runtime Images
 
+[![Systems Test](https://github.com/xosnrdev/rce-images/actions/workflows/systems-test.yml/badge.svg)](https://github.com/xosnrdev/rce-images/actions/workflows/systems-test.yml)
 [![Systems Build](https://github.com/xosnrdev/rce-images/actions/workflows/systems-build.yml/badge.svg)](https://github.com/xosnrdev/rce-images/actions/workflows/systems-build.yml)
 
 ## Overview
