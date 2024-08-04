@@ -7,6 +7,10 @@ on:
         description: The batch number for the build batch script
         required: true
         type: string
+    secrets:
+      GH_TOKEN:
+        description: GitHub token for pushing to GHCR
+        required: true
 
 env:
   REGISTRY: ghcr.io

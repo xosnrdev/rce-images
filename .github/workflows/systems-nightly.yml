@@ -79,6 +79,8 @@ jobs:
     uses: ./.github/workflows/template.yml
     with:
       batch_number: 1
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
   build_batch_2:
     name: Build Batch 2
@@ -86,6 +88,8 @@ jobs:
     uses: ./.github/workflows/template.yml
     with:
       batch_number: 2
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
   build_batch_3:
     name: Build Batch 3
@@ -93,6 +97,8 @@ jobs:
     uses: ./.github/workflows/template.yml
     with:
       batch_number: 3
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
   build_batch_4:
     name: Build Batch 4
@@ -100,6 +106,8 @@ jobs:
     uses: ./.github/workflows/template.yml
     with:
       batch_number: 4
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
   build_batch_5:
     name: Build Batch 5
@@ -107,6 +115,8 @@ jobs:
     uses: ./.github/workflows/template.yml
     with:
       batch_number: 5
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
   build_batch_6:
     name: Build Batch 6
@@ -114,6 +124,8 @@ jobs:
     uses: ./.github/workflows/template.yml
     with:
       batch_number: 6
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
   build_batch_7:
     name: Build Batch 7
@@ -121,6 +133,8 @@ jobs:
     uses: ./.github/workflows/template.yml
     with:
       batch_number: 7
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
   build_batch_8:
     name: Build Batch 8
@@ -128,6 +142,8 @@ jobs:
     uses: ./.github/workflows/template.yml
     with:
       batch_number: 8
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
   build_batch_9:
     name: Build Batch 9
@@ -135,6 +151,8 @@ jobs:
     uses: ./.github/workflows/template.yml
     with:
       batch_number: 9
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
   build_batch_10:
     name: Build Batch 10
@@ -142,3 +160,5 @@ jobs:
     uses: ./.github/workflows/template.yml
     with:
       batch_number: 10
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
