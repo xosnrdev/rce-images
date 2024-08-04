@@ -5,6 +5,7 @@ on:
     workflows: [Systems Test]
     types:
       - completed
+
   workflow_dispatch:
 
 env:
@@ -75,11 +76,11 @@ jobs:
           set -e
 
           for image in result/*; do
-            name="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-$(basename "${image}")"
+            tag_name="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-$(basename "${image}")"
 
-            echo "Pushing ${name}..."
-            docker tag "${image}" "${name}"
-            docker push "${name}"
+            echo "Pushing ${tag_name}..."
+            docker tag "${image}" "${tag_name}"
+            docker push "${tag_name}"
           done
 
   build_batch_2:
