@@ -1,0 +1,58 @@
+name: Batch Builder Template
+
+on:
+  workflow_call:
+    inputs:
+      batch_number:
+        description: The batch number for the build batch script
+        required: true
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+  GHCR_URI: ghcr.io/${{ github.actor }}
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up nix
+        uses: cachix/install-nix-action@v27
+        with:
+          nix_path: nixpkgs=channel:nixos-24.05
+          github_access_token: ${{ secrets.GH_TOKEN }}
+
+      - name: Nix build
+        run: |
+          chmod +x ./scripts/build_batch_${{ inputs.batch_number }}.sh
+          ./scripts/build_batch_${{ inputs.batch_number }}.sh
+
+      - name: Load images
+        run: |
+          chmod +x ./load_all.sh
+          ./load_all.sh
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_TOKEN }}
+
+      - name: Push images
+        run: |
+          set -e
+
+          for image in result/*; do
+            name="${{ env.GHCR_URI }}/$(basename "rce-image-${image}")"
+
+            echo "Pushing ${name}..."
+            docker push "${name}"
+          done

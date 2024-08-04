@@ -1,7 +1,6 @@
 # RCE Runtime Images
 
-[![Systems Test](https://github.com/xosnrdev/rce-images/actions/workflows/systems-test.yml/badge.svg)](https://github.com/xosnrdev/rce-images/actions/workflows/systems-test.yml)
-[![Systems Build](https://github.com/xosnrdev/rce-images/actions/workflows/systems-build.yml/badge.svg)](https://github.com/xosnrdev/rce-images/actions/workflows/systems-build.yml)
+[![Systems Nightly](https://github.com/xosnrdev/rce-images/actions/workflows/systems-nightly.yml/badge.svg)](https://github.com/xosnrdev/rce-images/actions/workflows/systems-nightly.yml)
 
 ## Overview
 
