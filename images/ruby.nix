@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/ruby";
+  name = "rce-images/ruby";
   tag = "latest";
   installedPackages = [
     pkgs.ruby

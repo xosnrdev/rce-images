@@ -14,7 +14,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/swift";
+  name = "rce-images/swift";
   tag = "latest";
   installedPackages = [
     pkgs.binutils

@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/nim";
+  name = "rce-images/nim";
   tag = "latest";
   installedPackages = [
     pkgs.gcc

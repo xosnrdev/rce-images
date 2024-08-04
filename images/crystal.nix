@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/crystal";
+  name = "rce-images/crystal";
   tag = "latest";
   installedPackages = [
     pkgs.crystal

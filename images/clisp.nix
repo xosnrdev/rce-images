@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/clisp";
+  name = "rce-images/clisp";
   tag = "latest";
   installedPackages = [
     pkgs.sbcl

@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/julia";
+  name = "rce-images/julia";
   tag = "latest";
   installedPackages = [
     pkgs.julia

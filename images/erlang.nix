@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/erlang";
+  name = "rce-images/erlang";
   tag = "latest";
   installedPackages = [
     pkgs.erlang

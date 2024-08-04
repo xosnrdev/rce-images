@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/hare";
+  name = "rce-images/hare";
   tag = "latest";
   installedPackages = [
     pkgs.hare

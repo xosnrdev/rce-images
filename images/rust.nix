@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/rust";
+  name = "rce-images/rust";
   tag = "latest";
   installedPackages = [
     pkgs.binutils

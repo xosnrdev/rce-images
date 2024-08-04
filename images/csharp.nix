@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/csharp";
+  name = "rce-images/csharp";
   tag = "latest";
   installedPackages = [
     pkgs.mono

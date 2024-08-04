@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/nix";
+  name = "rce-images/nix";
   tag = "latest";
   installedPackages = [
     pkgs.nix

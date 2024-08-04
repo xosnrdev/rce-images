@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/guile";
+  name = "rce-images/guile";
   tag = "latest";
   installedPackages = [
     pkgs.guile

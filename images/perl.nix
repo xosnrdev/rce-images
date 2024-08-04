@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/perl";
+  name = "rce-images/perl";
   tag = "latest";
   installedPackages = [
     pkgs.perl

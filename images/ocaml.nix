@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/ocaml";
+  name = "rce-images/ocaml";
   tag = "latest";
   installedPackages = [
     pkgs.ocaml

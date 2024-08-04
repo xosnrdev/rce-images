@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/bash";
+  name = "rce-images/bash";
   tag = "latest";
   installedPackages = [
     pkgs.procps

@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/typescript";
+  name = "rce-images/typescript";
   tag = "latest";
   installedPackages = [
     pkgs.nodePackages.typescript

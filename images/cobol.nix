@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/cobol";
+  name = "rce-images/cobol";
   tag = "latest";
   installedPackages = [
     pkgs.gcc

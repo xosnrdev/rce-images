@@ -13,7 +13,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/elm";
+  name = "rce-images/elm";
   tag = "latest";
   installedPackages = [
     pkgs.elmPackages.elm

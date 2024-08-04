@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/kotlin";
+  name = "rce-images/kotlin";
   tag = "latest";
   installedPackages = [
     pkgs.kotlin

@@ -17,7 +17,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/python";
+  name = "rce-images/python";
   tag = "latest";
   installedPackages = [
     pythonPackages

@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/ats";
+  name = "rce-images/ats";
   tag = "latest";
   installedPackages = [
     pkgs.gcc

@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/lua";
+  name = "rce-images/lua";
   tag = "latest";
   installedPackages = [
     pkgs.lua

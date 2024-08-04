@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/dlang";
+  name = "rce-images/dlang";
   tag = "latest";
   installedPackages = [
     pkgs.dmd

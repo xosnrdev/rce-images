@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/php";
+  name = "rce-images/php";
   tag = "latest";
   installedPackages = [
     pkgs.php

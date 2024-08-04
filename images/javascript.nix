@@ -10,7 +10,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/javascript";
+  name = "rce-images/javascript";
   tag = "latest";
   installedPackages = [
     pkgs.nodejs

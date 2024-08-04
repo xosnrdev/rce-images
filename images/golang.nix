@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/golang";
+  name = "rce-images/golang";
   tag = "latest";
   installedPackages = [
     pkgs.go

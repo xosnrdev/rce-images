@@ -7,7 +7,7 @@ let
 in
 build_image {
   pkgs = pkgs;
-  name = "rce/groovy";
+  name = "rce-images/groovy";
   tag = "latest";
   installedPackages = [
     pkgs.gawk
