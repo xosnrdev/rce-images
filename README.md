@@ -1,6 +1,6 @@
 # RCE Runtime Images
 
-[![RCE Runtime Build](https://github.com/xosnrdev/rce-images/actions/workflows/systems-build.yml/badge.svg)](https://github.com/xosnrdev/rce-images/actions/workflows/systems-build.yml)
+[![Systems Build](https://github.com/xosnrdev/rce-images/actions/workflows/systems-build.yml/badge.svg)](https://github.com/xosnrdev/rce-images/actions/workflows/systems-build.yml)
 
 ## Overview
 
