@@ -2,6 +2,6 @@
 set -e
 
 mkdir -p result
-nix-build --out-link result/lua images/lua.nix
-nix-build --out-link result/nim images/nim.nix
-nix-build --out-link result/nix images/nix.nix
+nix-build --out-link result/rce-images-lua images/lua.nix
+nix-build --out-link result/rce-images-nim images/nim.nix
+nix-build --out-link result/rce-images-nix images/nix.nix

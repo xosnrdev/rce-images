@@ -2,7 +2,7 @@
 set -e
 
 
-for image in result/*; do
+for image in result/rce-images-*; do
   echo "Loading ${image}..."
   docker load -i "${image}"
 done
