@@ -125,6 +125,7 @@ jobs:
             name="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-$(basename $image)"
 
             echo "Pushing $name..."
+            docker tag $image $name
             docker push "$name"
           done
 
