@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: read
+  packages: write
 
 jobs:
   paths-filter:
@@ -48,9 +49,6 @@ jobs:
       - name: Nix build
         run: |
           nix-build --out-link result/javascript images/javascript.nix
-
-      - name: Set up docker buildx
-        uses: docker/setup-buildx-action@v3
 
       - name: Load image
         run: |
