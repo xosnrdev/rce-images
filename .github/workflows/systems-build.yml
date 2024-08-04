@@ -16,10 +16,29 @@ permissions:
   packages: write
 
 jobs:
+  paths-filter:
+    name: Paths Filter
+    runs-on: ubuntu-latest
+    outputs:
+      images: ${{ steps.changes.outputs.images }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for changes in paths
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          base: ${{ github.event.before }}
+          filters: |
+            images:
+              - 'images/**'
+
   build_batch_1:
     name: Build Batch 1
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: paths-filter
+    if: ${{ needs.paths-filter.outputs.images == 'true' }}
 
     steps:
       - name: Checkout code
@@ -66,7 +85,8 @@ jobs:
   build_batch_2:
     name: Build Batch 2
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: paths-filter
+    if: ${{ needs.paths-filter.outputs.images == 'true' }}
 
     steps:
       - name: Checkout code
@@ -113,7 +133,8 @@ jobs:
   build_batch_3:
     name: Build Batch 3
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: paths-filter
+    if: ${{ needs.paths-filter.outputs.images == 'true' }}
 
     steps:
       - name: Checkout code
@@ -160,7 +181,8 @@ jobs:
   build_batch_4:
     name: Build Batch 4
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: paths-filter
+    if: ${{ needs.paths-filter.outputs.images == 'true' }}
 
     steps:
       - name: Checkout code
@@ -207,7 +229,8 @@ jobs:
   build_batch_5:
     name: Build Batch 5
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: paths-filter
+    if: ${{ needs.paths-filter.outputs.images == 'true' }}
 
     steps:
       - name: Checkout code
@@ -254,7 +277,8 @@ jobs:
   build_batch_6:
     name: Build Batch 6
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: paths-filter
+    if: ${{ needs.paths-filter.outputs.images == 'true' }}
 
     steps:
       - name: Checkout code
@@ -301,7 +325,8 @@ jobs:
   build_batch_7:
     name: Build Batch 7
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: paths-filter
+    if: ${{ needs.paths-filter.outputs.images == 'true' }}
 
     steps:
       - name: Checkout code
@@ -348,7 +373,8 @@ jobs:
   build_batch_8:
     name: Build Batch 8
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: paths-filter
+    if: ${{ needs.paths-filter.outputs.images == 'true' }}
 
     steps:
       - name: Checkout code
@@ -395,7 +421,8 @@ jobs:
   build_batch_9:
     name: Build Batch 9
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: paths-filter
+    if: ${{ needs.paths-filter.outputs.images == 'true' }}
 
     steps:
       - name: Checkout code
@@ -442,7 +469,8 @@ jobs:
   build_batch_10:
     name: Build Batch 10
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: paths-filter
+    if: ${{ needs.paths-filter.outputs.images == 'true' }}
 
     steps:
       - name: Checkout code
