@@ -105,7 +105,7 @@ jobs:
           images=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep '^rce/' || true)
 
           tags="${{ steps.metadata.outputs.tags }}"
-          tags_list=$(echo "${tags}" | tr ',' ' ')
+          tags_list=$(echo "${tags}" | tr '\n' ' ' | tr -d '\r')
 
           for image in ${images}; do
             for tag in ${tags_list}; do
