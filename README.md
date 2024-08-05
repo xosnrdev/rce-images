@@ -4,7 +4,7 @@
 
 ## Overview
 
-This are runtime docker images used by [cexaengine.com](https://cexaengine.com) to run code.
+This are runtime docker images used by [cexaengine.com](https://cexaengine.com) to run user code.
 The images are built using nix which are pinned to a specific nixpkgs commit to create reproducible images.
 See the [overview](https://github.com/xosnrdev/carai) on how everything is connected.
 
