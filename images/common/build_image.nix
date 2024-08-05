@@ -52,5 +52,11 @@ pkgs.dockerTools.buildImage {
       ];
 
     Cmd = [ "${codeRunner}/bin/rce-runner" "--path" "/home/rce" ];
+
+    Labels = {
+      "org.opencontainers.image.authors" = "xosnrdev";
+      "org.opencontainers.image.source" = "https://github.com/xosnrdev/rce-images";
+      "org.opencontainers.image.version" = "edge";
+    };
   };
 }
