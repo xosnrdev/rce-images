@@ -84,7 +84,7 @@ jobs:
 
           echo "IMAGES_LIST=${images_list}" >> $GITHUB_ENV
 
-      - name: Set up metadata for images
+      - name: Set up metadata for the images
         id: metadata
         uses: docker/metadata-action@v5
         with:
@@ -95,38 +95,32 @@ jobs:
             type=edge
             type=sha
 
-      - name: Tag and Push Images Concurrently
+      - name: Tag images
         run: |
           set -e
 
           images=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep '^rce/' || true)
+
           tags="${{ steps.metadata.outputs.tags }}"
           tags_list=$(echo "${tags}" | tr '\n' ' ' | tr -d '\r')
 
-          pushed_images=""
-
-          push_image() {
-            local image=$1
-            local tags=$2
-            local pushed_tags=""
-            for tag in ${tags}; do
-              echo "Tagging and pushing ${image} with ${tag}..."
-              docker tag "${image}" "${tag}"
-              docker push "${tag}"
-              pushed_tags+="${tag} "
-            done
-            echo "${pushed_tags}"
-          }
-
           for image in ${images}; do
-            pushed_tags=$(push_image "${image}" "${tags_list}")
-            pushed_images+="${pushed_tags}"
+            for tag in ${tags_list}; do
+              echo "Tagging ${image} with ${tag}..."
+              docker tag "${image}" "${tag}"
+            done
           done
 
-          pushed_images=$(echo "${pushed_images}" | xargs)
-          echo "PUSHED_IMAGES=${pushed_images}" >> $GITHUB_ENV
+          echo "TAGS_LIST=${tags_list}" >> $GITHUB_ENV
 
-          echo "All images have been pushed. Pushed images: ${pushed_images}"
+      - name: Push images
+        run: |
+          set -e
+
+          for image in ${{ env.TAGS_LIST }}; do
+            echo "Pushing ${image}..."
+            docker push "${image}"
+          done
 
       - name: Set Package Visibility to Public
         env:
@@ -154,7 +148,7 @@ jobs:
               -f visibility='public'
           }
 
-          IFS=' ' read -ra pushed_images <<< "${{ env.PUSHED_IMAGES }}"
+          IFS=' ' read -ra pushed_images <<< "${{ env.TAGS_LIST }}"
           for image in "${pushed_images[@]}"; do
             echo "Processing image: ${image}"
             
