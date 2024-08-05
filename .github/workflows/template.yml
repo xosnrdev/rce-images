@@ -102,10 +102,12 @@ jobs:
         run: |
           set -e
 
+          images=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep '^rce/' || true)
+
           tags="${{ steps.metadata.outputs.tags }}"
           tags_list=$(echo "${tags}" | tr ',' ' ')
 
-          for image in ${{ env.IMAGES_LIST }}; do
+          for image in ${images}; do
             for tag in ${tags_list}; do
               echo "Tagging ${image} with ${tag}..."
               docker tag "${image}" "${tag}"
