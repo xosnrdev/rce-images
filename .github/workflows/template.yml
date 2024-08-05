@@ -97,7 +97,7 @@ jobs:
           for image in ${{ env.IMAGES_LIST }}; do
             for tag in ${tags_list}; do
               echo "Tagging ${image} with ${tag}..."
-              docker tag "${image}" "${image}":"${tag}"
+              docker tag "${image}" "${image}:${tag}"
 
               full_ghcr_uri="${full_ghcr_uri} ${image}:${tag}"
             done
