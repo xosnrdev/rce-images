@@ -56,26 +56,87 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GH_TOKEN }}
 
-      - name: Push images
+      - name: Prepare images for metadata
         run: |
           set -e
 
           images=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep '^rce/' || true)
 
-          IFS=$'\n'
-          for image in ${images}; do
-            tag_name="${GHCR_URI}/$(basename "${image}")"
+          images_list=$(echo "${images}" | sed "s/^rce\///" | sed "s/^/${{ env.GHCR_URI }}\//" | tr '\n' ' ')
 
-            echo "Tagging ${image} as ${tag_name}..."
-            docker tag "${image}" "${tag_name}"
+          if [-z "${images_list}"]; then
+            echo "IMAGES_LIST=''" >> $GITHUB_ENV
+          else
+            echo "IMAGES_LIST='${images_list}'" >> $GITHUB_ENV
+          fi
 
-            echo "Pushing ${tag_name}..."
-            docker push "${tag_name}"
+      - name: Set up metadata for images
+        id: metadata
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGES_LIST }}
+          flavor: |
+            latest=true
+          tags: |
+            type=edge
+            type=sha
 
-            echo "Setting ${tag_name} visibility to public..."
-            gh api --method PATCH -H "Accept: application/vnd.github.v3+json" "/user/packages/container/${tag_name}/visibility" -f visibility=public
+      - name: Tag images
+        run: |
+          set -e
 
-            echo "Connecting ${tag_name} package to repository..."
-            gh api --method PUT -H "Accept: application/vnd.github.v3+json" "/user/packages/container/${tag_name}/repository" -f repository="${{github.repository}}"
+          tags="${{ steps.metadata.outputs.tags }}"
+          tags_list=$(echo "$tags" | tr ',' ' ')
+
+          full_ghcr_uri=''
+
+          for image in ${{ env.IMAGES_LIST }}; do
+            for tag in ${tags_list}; do
+              echo "Tagging ${image} with ${tag}..."
+              docker tag ${image} ${image}:${tag}
+
+              full_ghcr_uri="${full_ghcr_uri} ${image}:${tag}"
+            done
           done
-          unset IFS
+
+          echo "FULL_GHCR_URI=${full_ghcr_uri}" >> $GITHUB_ENV
+
+      - name: Push images
+        run: |
+          set -e
+
+          for image in ${{ env.FULL_GHCR_URI }}; do
+            echo "Pushing ${image}..."
+            docker push ${image}
+          done
+
+      - name: Make images public
+        run: |
+          set -e
+
+          for image in ${{ env.FULL_GHCR_URI }}; do
+            echo "Making ${image} public..."
+            repo=$(basename ${image} | cut -d: -f1)
+            tag=$(basename ${image} | cut -d: -f2)
+
+            curl -X PATCH \
+              -H "Accept: application/vnd.github.v3+json" \
+              -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+              "https://api.github.com/user/packages/container/${repo}/versions/${tag}/visibility" \
+              -d '{"visibility":"public"}'
+          done
+
+      - name: Connect images to repository package
+        run: |
+          set -e
+
+          for image in ${{ env.FULL_GHCR_URI }}; do
+            echo "Connecting ${image} to repository package..."
+            repo=$(basename ${image} | cut -d: -f1)
+
+            curl -X POST \
+              -H "Accept: application/vnd.github.v3+json" \
+              -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+              "https://api.github.com/user/packages/container/${repo}/relationships" \
+              -d "{\"repository\": \"${{ github.repository }}\"}"
+          done
