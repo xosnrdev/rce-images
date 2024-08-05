@@ -56,7 +56,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GH_TOKEN }}
 
-      - name: Prepare images for metadata
+      - name: Set images for metadata
         run: |
           set -e
 
@@ -83,9 +83,6 @@ jobs:
           done <<< "${images}"
 
           echo "IMAGES_LIST=${images_list}" >> $GITHUB_ENV
-
-      - name: Debug images list
-        run: echo "IMAGES_LIST=${{ env.IMAGES_LIST }}"
 
       - name: Set up metadata for images
         id: metadata
@@ -125,7 +122,7 @@ jobs:
             docker push "${image}"
           done
 
-      - name: Make images public
+      - name: Set images public
         run: |
           set -e
 
@@ -137,28 +134,12 @@ jobs:
           for image in ${{ env.TAGS_LIST }}; do
             echo "Making ${image} public..."
             repo=$(echo "${image}" | cut -d: -f1 | sed "s|ghcr.io/||")
-            tag=$(echo "${image}" | cut -d: -f2)
 
-            api_url="https://api.github.com/user/packages/container/${repo}/versions/${tag}/visibility"
+            api_url="https://api.github.com/user/packages/container/${repo}/visibility"
 
             curl -X PATCH \
               -H "Accept: application/vnd.github.v3+json" \
               -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
               "${api_url}" \
               -d '{"visibility":"public"}'
-          done
-
-      - name: Connect images to repository package
-        run: |
-          set -e
-
-          for image in ${{ env.TAGS_LIST }}; do
-            echo "Connecting ${image} to repository package..."
-            repo=$(basename "${image}" | cut -d: -f1)
-
-            curl -X POST \
-              -H "Accept: application/vnd.github.v3+json" \
-              -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
-              "https://api.github.com/user/packages/container/${repo}/relationships" \
-              -d "{\"repository\": \"${{ github.repository }}\"}"
           done
