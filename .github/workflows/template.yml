@@ -114,34 +114,43 @@ jobs:
           echo "TAGS_LIST=${tags_list}" >> $GITHUB_ENV
 
       - name: Push images
-        run: |
-          set -e
+        uses: docker/build-push-action@v6
+        with:
+          context: "${{ env.TAGS_LIST }}"
+          push: true
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          github-token: ${{ secrets.GH_TOKEN }}
 
-          for image in ${{ env.TAGS_LIST }}; do
-            echo "Pushing ${image}..."
-            docker push "${image}"
-          done
+      # - name: Push images
+      #   run: |
+      #     set -e
 
-      - name: Set images public
-        run: |
-          set -e
+      #     for image in ${{ env.TAGS_LIST }}; do
+      #       echo "Pushing ${image}..."
+      #       docker push "${image}"
+      #     done
 
-          if [ -z "${{ env.TAGS_LIST }}" ]; then
-            echo "No images to make public."
-            exit 1
-          fi
+      # - name: Set images public
+      #   run: |
+      #     set -e
 
-          for image in ${{ env.TAGS_LIST }}; do
-            echo "Making ${image} public..."
-            repo=$(echo "${image}" | cut -d: -f1 | sed "s|ghcr.io/||")
+      #     if [ -z "${{ env.TAGS_LIST }}" ]; then
+      #       echo "No images to make public."
+      #       exit 1
+      #     fi
 
-            api_url="https://api.github.com/users/${{ github.repository_owner }}/packages/container/${repo}/visibility"
+      #     for image in ${{ env.TAGS_LIST }}; do
+      #       echo "Making ${image} public..."
+      #       repo=$(echo "${image}" | cut -d: -f1 | sed "s|ghcr.io/||")
 
-            curl -L \
-              -H "Accept: application/vnd.github+json" \
-              -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              -X PATCH \
-              "${api_url}" \
-              -d '{"visibility":"public"}'
-          done
+      #       api_url="https://api.github.com/users/${{ github.repository_owner }}/packages/container/${repo}/visibility"
+
+      #       curl -L \
+      #         -H "Accept: application/vnd.github+json" \
+      #         -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+      #         -H "X-GitHub-Api-Version: 2022-11-28" \
+      #         -X PATCH \
+      #         "${api_url}" \
+      #         -d '{"visibility":"public"}'
+      #     done
