@@ -9,7 +9,6 @@ on:
         type: string
     secrets:
       GH_TOKEN:
-        description: GitHub token for pushing to GHCR
         required: true
 
 env:
@@ -21,7 +20,18 @@ permissions:
   packages: write
 
 jobs:
+  free-disk-space:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Free up disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          # this might remove tools that are actually needed,
+          # if set to "true" but frees about 6 GB
+          tool-cache: true
+
   build:
+    needs: free-disk-space
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
