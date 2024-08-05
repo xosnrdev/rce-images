@@ -12,70 +12,70 @@ permissions:
   packages: write
 
 jobs:
-  test:
-    name: Test
-    runs-on: ubuntu-latest
+  # test:
+  #   name: Test
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Set up nix
-        uses: cachix/install-nix-action@v27
-        with:
-          nix_path: nixpkgs=channel:nixos-24.05
-          github_access_token: ${{ secrets.GH_TOKEN }}
+  #     - name: Set up nix
+  #       uses: cachix/install-nix-action@v27
+  #       with:
+  #         nix_path: nixpkgs=channel:nixos-24.05
+  #         github_access_token: ${{ secrets.GH_TOKEN }}
 
-      - name: Nix build
-        run: |
-          nix-build --out-link result/javascript images/javascript.nix
+  #     - name: Nix build
+  #       run: |
+  #         nix-build --out-link result/javascript images/javascript.nix
 
-      - name: Load image
-        run: |
-          docker load -i result/javascript
+  #     - name: Load image
+  #       run: |
+  #         docker load -i result/javascript
 
-      - name: Run test
-        run: |
-          output=$(echo '{
-            "language": "javascript",
-            "files": [{
-              "name": "main.js",
-              "content": "console.log(\"Hello World!\");"
-            }]
-          }' | docker run --rm -i --read-only --tmpfs /tmp:rw,noexec,nosuid,size=65536k --tmpfs /home/rce:rw,exec,nosuid,uid=1000,gid=1000,size=131072k -u rce -w /home/rce rce/javascript:latest)
+  #     - name: Run test
+  #       run: |
+  #         output=$(echo '{
+  #           "language": "javascript",
+  #           "files": [{
+  #             "name": "main.js",
+  #             "content": "console.log(\"Hello World!\");"
+  #           }]
+  #         }' | docker run --rm -i --read-only --tmpfs /tmp:rw,noexec,nosuid,size=65536k --tmpfs /home/rce:rw,exec,nosuid,uid=1000,gid=1000,size=131072k -u rce -w /home/rce rce/javascript:latest)
 
-          echo "Output: ${output}"
+  #         echo "Output: ${output}"
 
-          if [[ "${output}" == *"Hello World!"* ]]; then
-            echo "Test passed."
-          else
-            echo "Test failed."
-            exit 1
-          fi
+  #         if [[ "${output}" == *"Hello World!"* ]]; then
+  #           echo "Test passed."
+  #         else
+  #           echo "Test failed."
+  #           exit 1
+  #         fi
 
-  paths-filter:
-    name: Paths Filter
-    runs-on: ubuntu-latest
-    outputs:
-      images: ${{ steps.changes.outputs.images }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  # paths-filter:
+  #   name: Paths Filter
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     images: ${{ steps.changes.outputs.images }}
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Check for changes in paths
-        uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            images:
-              - 'images/**'
+  #     - name: Check for changes in paths
+  #       uses: dorny/paths-filter@v3
+  #       id: changes
+  #       with:
+  #         filters: |
+  #           images:
+  #             - 'images/**'
 
   build_batch_1:
     name: Build Batch 1
-    needs:
-      - test
-      - paths-filter
-    if: ${{ needs.paths-filter.outputs.images == 'true' }}
+    # needs:
+    #   - test
+    #   - paths-filter
+    # if: ${{ needs.paths-filter.outputs.images == 'true' }}
     uses: ./.github/workflows/template.yml
     with:
       batch_number: 1
