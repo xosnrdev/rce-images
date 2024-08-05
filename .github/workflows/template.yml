@@ -67,7 +67,7 @@ jobs:
             exit 1
           fi
 
-          images_list=$(echo "${images}" | sed "s/^rce\///" | sed "s|^|${{ env.GHCR_URI }}/|" | tr '\n' ' ')
+          images_list=$(echo "${images}" | sed "s/^rce\///" | grep -v ':latest' | sed "s|^|${{ env.GHCR_URI }}/|" | tr '\n' ' ')
 
           echo "IMAGES_LIST=${images_list}" >> $GITHUB_ENV
 
@@ -90,26 +90,22 @@ jobs:
           set -e
 
           tags="${{ steps.metadata.outputs.tags }}"
-          tags_list=$(echo "$tags" | tr ',' ' ')
-
-          full_ghcr_uri=''
+          tags_list=$(echo "${tags}" | tr ',' ' ')
 
           for image in ${{ env.IMAGES_LIST }}; do
             for tag in ${tags_list}; do
               echo "Tagging ${image} with ${tag}..."
-              docker tag "${image}" "${image}:${tag}"
-
-              full_ghcr_uri="${full_ghcr_uri} ${image}:${tag}"
+              docker tag "${image}" "${tag}"
             done
           done
 
-          echo "FULL_GHCR_URI=${full_ghcr_uri}" >> $GITHUB_ENV
+          echo "TAGS_LIST=${tags_list}" >> $GITHUB_ENV
 
       - name: Push images
         run: |
           set -e
 
-          for image in ${{ env.FULL_GHCR_URI }}; do
+          for image in ${{ env.TAGS_LIST }}; do
             echo "Pushing ${image}..."
             docker push "${image}"
           done
@@ -118,7 +114,7 @@ jobs:
         run: |
           set -e
 
-          for image in ${{ env.FULL_GHCR_URI }}; do
+          for image in ${{ env.TAGS_LIST }}; do
             echo "Making ${image} public..."
             repo=$(basename "${image}" | cut -d: -f1)
             tag=$(basename "${image}" | cut -d: -f2)
@@ -134,7 +130,7 @@ jobs:
         run: |
           set -e
 
-          for image in ${{ env.FULL_GHCR_URI }}; do
+          for image in ${{ env.TAGS_LIST }}; do
             echo "Connecting ${image} to repository package..."
             repo=$(basename "${image}" | cut -d: -f1)
 
