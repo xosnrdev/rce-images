@@ -20,7 +20,7 @@ permissions:
   packages: write
 
 jobs:
-  free-disk-space:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Free up disk space
@@ -30,10 +30,6 @@ jobs:
           # if set to "true" but frees about 6 GB
           tool-cache: true
 
-  build:
-    needs: free-disk-space
-    runs-on: ubuntu-latest
-    steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -68,12 +64,18 @@ jobs:
 
           IFS=$'\n'
           for image in ${images}; do
-            tag_name="${GHCR_URI}/${image}"
+            tag_name="${GHCR_URI}/$(basename "${image}")"
 
             echo "Tagging ${image} as ${tag_name}..."
             docker tag "${image}" "${tag_name}"
 
             echo "Pushing ${tag_name}..."
             docker push "${tag_name}"
+
+            echo "Setting ${tag_name} visibility to public..."
+            gh api --method PATCH -H "Accept: application/vnd.github.v3+json" "/user/packages/container/${tag_name}/visibility" -f visibility=public
+
+            echo "Connecting ${tag_name} package to repository..."
+            gh api --method PUT -H "Accept: application/vnd.github.v3+json" "/user/packages/container/${tag_name}/repository" -f repository="${{github.repository}}"
           done
           unset IFS
