@@ -60,6 +60,8 @@ jobs:
         run: |
           set -e
 
+          images_list=""
+
           images=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep '^rce/' || true)
 
           if [[ -z "${images}" ]]; then
@@ -67,11 +69,18 @@ jobs:
             exit 1
           fi
 
-          images_list=""
+          while IFS= read -r image; do
+            image=$(echo "${image}" | sed "s/^rce\///")
 
-          for image in $(echo "${images}" | sed "s/^rce\///" | grep -v ':latest$'); do
-              images_list+="${{ env.GHCR_URI }}/${image}"
-          done
+            if [[ "${image}" == *":latest" ]]; then
+              image=$(echo "${image}" | sed "s/:latest$//")
+            fi
+
+            formatted_uri="${{ env.GHCR_URI }}-${image}"
+
+            images_list+="${formatted_uri} "
+
+          done <<< "${images}"
 
           echo "IMAGES_LIST=${images_list}" >> $GITHUB_ENV
 
