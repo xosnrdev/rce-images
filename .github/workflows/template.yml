@@ -129,15 +129,22 @@ jobs:
         run: |
           set -e
 
+          if [ -z "${{ env.TAGS_LIST }}" ]; then
+            echo "No images to make public."
+            exit 1
+          fi
+
           for image in ${{ env.TAGS_LIST }}; do
             echo "Making ${image} public..."
-            repo=$(basename "${image}" | cut -d: -f1)
-            tag=$(basename "${image}" | cut -d: -f2)
+            repo=$(echo "${image}" | cut -d: -f1 | sed "s|ghcr.io/||")
+            tag=$(echo "${image}" | cut -d: -f2)
+
+            api_url="https://api.github.com/user/packages/container/${repo}/versions/${tag}/visibility"
 
             curl -X PATCH \
               -H "Accept: application/vnd.github.v3+json" \
               -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
-              "https://api.github.com/user/packages/container/${repo}/versions/${tag}/visibility" \
+              "${api_url}" \
               -d '{"visibility":"public"}'
           done
 
