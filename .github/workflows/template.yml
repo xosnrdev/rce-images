@@ -158,13 +158,9 @@ jobs:
             echo "Extracted Image Name: ${image_name}"
             echo "Extracted Tag: ${tag}"
 
-            if [[ "${image_name}" == "${{ env.GHCR_URI }}/*" ]]; then
-              package_name=$(echo "${image_name}" | sed "s|^${{ env.GHCR_URI }}/||")
-            else
-              package_name="${image_name}"
-            fi
+            package_name=$(echo "${image_name}" | sed 's|ghcr.io/[^/]*/||')
 
-            echo "Processing Package Name: ${package_name}"
+            echo "Processed Package Name: ${package_name}"
 
             version_id=$(get_package_version_id "${package_name}" "${tag}")
             
