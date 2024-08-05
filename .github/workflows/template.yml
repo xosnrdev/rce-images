@@ -67,7 +67,11 @@ jobs:
             exit 1
           fi
 
-          images_list=$(echo "${images}" | sed "s/^rce\///" | grep -v ':latest' | sed "s|^|${{ env.GHCR_URI }}/|" | tr '\n' ' ')
+          images_list=""
+
+          for image in $(echo "${images}" | sed "s/^rce\///" | grep -v ':latest$'); do
+              images_list+="${{ env.GHCR_URI }}/${image}"
+          done
 
           echo "IMAGES_LIST=${images_list}" >> $GITHUB_ENV
 
