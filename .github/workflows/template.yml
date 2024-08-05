@@ -14,7 +14,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  GHCR_URI: ghcr.io/${{ github.actor }}
+  GHCR_URI: ghcr.io/${{ github.repository }}
 
 permissions:
   contents: read
@@ -54,14 +54,16 @@ jobs:
         run: |
           set -e
 
-          images=$(docker images --format "{{.Repository}}:{{.Tag}}")
+          images=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep '^rce/' || true)
 
-          for image in $images; do
-            name="${{ env.GHCR_URI }}/$(basename "rce-image-${image}")"
+          IFS=$'\n'
+          for image in ${images}; do
+            tag_name="${GHCR_URI}/${image}"
 
-            echo "Tagging ${image} as ${name}..."
-            docker tag "${image}" "${name}"
+            echo "Tagging ${image} as ${tag_name}..."
+            docker tag "${image}" "${tag_name}"
 
-            echo "Pushing ${name}..."
-            docker push "${name}"
+            echo "Pushing ${tag_name}..."
+            docker push "${tag_name}"
           done
+          unset IFS
