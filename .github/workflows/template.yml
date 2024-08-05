@@ -95,62 +95,82 @@ jobs:
             type=edge
             type=sha
 
-      - name: Tag images
+      - name: Tag and Push Images Concurrently
         run: |
           set -e
 
           images=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep '^rce/' || true)
-
           tags="${{ steps.metadata.outputs.tags }}"
           tags_list=$(echo "${tags}" | tr '\n' ' ' | tr -d '\r')
 
-          for image in ${images}; do
-            for tag in ${tags_list}; do
-              echo "Tagging ${image} with ${tag}..."
+          pushed_images=""
+
+          push_image() {
+            local image=$1
+            local tags=$2
+            local pushed_tags=""
+            for tag in ${tags}; do
+              echo "Tagging and pushing ${image} with ${tag}..."
               docker tag "${image}" "${tag}"
+              docker push "${tag}"
+              pushed_tags+="${tag} "
             done
+            echo "${pushed_tags}"
+          }
+
+          for image in ${images}; do
+            pushed_tags=$(push_image "${image}" "${tags_list}")
+            pushed_images+="${pushed_tags}"
           done
 
-          echo "TAGS_LIST=${tags_list}" >> $GITHUB_ENV
+          pushed_images=$(echo "${pushed_images}" | xargs)
+          echo "PUSHED_IMAGES=${pushed_images}" >> $GITHUB_ENV
 
-      - name: Push images
-        uses: docker/build-push-action@v6
-        with:
-          context: "${{ env.TAGS_LIST }}"
-          push: true
-          tags: ${{ steps.metadata.outputs.tags }}
-          labels: ${{ steps.metadata.outputs.labels }}
-          github-token: ${{ secrets.GH_TOKEN }}
+          echo "All images have been pushed. Pushed images: ${pushed_images}"
 
-      # - name: Push images
-      #   run: |
-      #     set -e
+      - name: Set Package Visibility to Public
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          set -e
 
-      #     for image in ${{ env.TAGS_LIST }}; do
-      #       echo "Pushing ${image}..."
-      #       docker push "${image}"
-      #     done
+          get_package_version_id() {
+            local package_name=$1
+            local tag=$2
+            gh api \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/user/packages/container/${package_name}/versions" \
+              --jq ".[] | select(.metadata.container.tags[] | contains(\"${tag}\")) | .id"
+          }
 
-      # - name: Set images public
-      #   run: |
-      #     set -e
+          set_package_public() {
+            local package_name=$1
+            local version_id=$2
+            gh api \
+              --method PATCH \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/user/packages/container/${package_name}/versions/${version_id}" \
+              -f visibility='public'
+          }
 
-      #     if [ -z "${{ env.TAGS_LIST }}" ]; then
-      #       echo "No images to make public."
-      #       exit 1
-      #     fi
+          IFS=' ' read -ra pushed_images <<< "${{ env.PUSHED_IMAGES }}"
+          for image in "${pushed_images[@]}"; do
+            image_name=$(echo "${image}" | cut -d':' -f1 | sed "s|^${REGISTRY}/||")
+            tag=$(echo "${image}" | cut -d':' -f2)
+            
+            echo "Processing ${image_name}:${tag}"
+            
+            package_name=$(echo "${image_name}" | cut -d'/' -f2-)
+            version_id=$(get_package_version_id "${package_name}" "${tag}")
+            
+            if [ -n "${version_id}" ]; then
+              echo "Setting ${package_name}:${tag} (ID: ${version_id}) to public"
+              set_package_public "${package_name}" "${version_id}"
+            else
+              echo "Could not find version ID for ${package_name}:${tag}"
+            fi
+          done
 
-      #     for image in ${{ env.TAGS_LIST }}; do
-      #       echo "Making ${image} public..."
-      #       repo=$(echo "${image}" | cut -d: -f1 | sed "s|ghcr.io/||")
-
-      #       api_url="https://api.github.com/users/${{ github.repository_owner }}/packages/container/${repo}/visibility"
-
-      #       curl -L \
-      #         -H "Accept: application/vnd.github+json" \
-      #         -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
-      #         -H "X-GitHub-Api-Version: 2022-11-28" \
-      #         -X PATCH \
-      #         "${api_url}" \
-      #         -d '{"visibility":"public"}'
-      #     done
+          echo "All packages have been set to public."
