@@ -67,7 +67,12 @@ jobs:
             exit 1
           fi
 
-          echo "IMAGES_LIST=${images// /$'\n'}" >> "${GITHUB_ENV}"
+          images_list=$(echo "${images}" | sed "s/^rce\///" | sed "s|^|${{ env.GHCR_URI }}/|" | tr '\n' ' ')
+
+          echo "IMAGES_LIST=${images_list}" >> $GITHUB_ENV
+
+      - name: Debug images list
+        run: echo "IMAGES_LIST=${{ env.IMAGES_LIST }}"
 
       - name: Set up metadata for images
         id: metadata
