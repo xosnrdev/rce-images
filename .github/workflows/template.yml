@@ -126,21 +126,47 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          set -e
+          set -eo pipefail
 
-          get_package_version_id() {
-            local package_name=$1
-            local tag=$2
-            response=$(gh api -H "Accept: application/vnd.github+json" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              "/user/packages/container/${package_name}/versions" --jq ".[] | select(.metadata.container.tags[] | contains(\"${tag}\")) | .id")
-            echo "Version ID Response: ${response}"
-            echo "${response}"
+          log() {
+            echo "$(date '+%Y-%m-%d %H:%M:%S') - $1"
           }
 
-          set_package_public() {
-            local package_name=$1
-            local version_id=$2
+          extract_package_name() {
+            echo "$1" | sed 's|ghcr.io/[^/]*/||'
+          }
+
+          extract_tag() {
+            echo "$1" | cut -d':' -f2
+          }
+
+          is_valid_package_name() {
+            [[ "$1" =~ ^[a-z0-9.-]+$ ]]
+          }
+
+          get_package_version_id() {
+            local package_name="$1"
+            local tag="$2"
+            gh api -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/user/packages/container/${package_name}/versions" \
+              --jq ".[] | select(.metadata.container.tags[] | contains(\"${tag}\")) | .id" \
+              | tr -d '\n'
+          }
+
+          is_already_public() {
+            local package_name="$1"
+            local version_id="$2"
+            visibility=$(gh api -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/user/packages/container/${package_name}/versions/${version_id}" \
+              --jq '.visibility')
+            [[ "$visibility" == "public" ]]
+          }
+
+          set_package_to_public() {
+            local package_name="$1"
+            local version_id="$2"
             gh api --method PATCH \
               -H "Accept: application/vnd.github+json" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
@@ -148,28 +174,64 @@ jobs:
               -f visibility='public'
           }
 
-          IFS=' ' read -ra pushed_images <<< "${{ env.TAGS_LIST }}"
-          for image in "${pushed_images[@]}"; do
-            echo "Processing image: ${image}"
-            
-            image_name=$(echo "${image}" | cut -d':' -f1)
-            tag=$(echo "${image}" | cut -d':' -f2)
+          retry_with_backoff() {
+            local max_attempts=5
+            local attempt=1
+            local delay=5
 
-            echo "Extracted Image Name: ${image_name}"
-            echo "Extracted Tag: ${tag}"
+            while [[ $attempt -le $max_attempts ]]; do
+              if "$@"; then
+                return 0
+              fi
+              log "Attempt $attempt failed. Retrying in $delay seconds..."
+              sleep $delay
+              attempt=$((attempt + 1))
+              delay=$((delay * 2))
+            done
 
-            package_name=$(echo "${image_name}" | sed 's|ghcr.io/[^/]*/||')
+            log "All $max_attempts attempts failed."
+            return 1
+          }
 
-            echo "Processed Package Name: ${package_name}"
+          set_package_visibility_to_public() {
+            local pushed_images=($TAGS_LIST)
 
-            version_id=$(get_package_version_id "${package_name}" "${tag}")
-            
-            if [ -n "${version_id}" ]; then
-              echo "Setting ${package_name}:${tag} (ID: ${version_id}) to public"
-              set_package_public "${package_name}" "${version_id}"
-            else
-              echo "Could not find version ID for ${package_name}:${tag}"
+            if [[ ${#pushed_images[@]} -eq 0 ]]; then
+              log "No images to process"
+              return 0
             fi
-          done
 
-          echo "All packages have been set to public."
+            for image in "${pushed_images[@]}"; do
+              log "Processing image: $image"
+
+              package_name=$(extract_package_name "$image")
+              tag=$(extract_tag "$image")
+
+              if ! is_valid_package_name "$package_name"; then
+                log "Invalid package name: $package_name"
+                continue
+              fi
+
+              version_id=$(get_package_version_id "$package_name" "$tag")
+
+              if [[ -z "$version_id" ]]; then
+                log "Package version not found: $package_name:$tag"
+                continue
+              fi
+
+              if is_already_public "$package_name" "$version_id"; then
+                log "Package already public: $package_name:$tag"
+                continue
+              fi
+
+              if retry_with_backoff set_package_to_public "$package_name" "$version_id"; then
+                log "Successfully set $package_name:$tag to public"
+              else
+                log "Failed to set $package_name:$tag to public after multiple attempts"
+              fi
+            done
+
+            log "Finished processing all packages"
+          }
+
+          set_package_visibility_to_public
