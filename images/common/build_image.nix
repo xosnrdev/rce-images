@@ -57,7 +57,7 @@ pkgs.dockerTools.buildImage {
       "org.opencontainers.image.authors" = "xosnrdev";
       "org.opencontainers.image.source" = "https://github.com/xosnrdev/rce-images";
       "org.opencontainers.image.version" = "edge";
-      "org.opencontainers.image.description" = "RCE runtime image";
+      "org.opencontainers.image.description" = "RCE runtime image for running user code.";
     };
   };
 }

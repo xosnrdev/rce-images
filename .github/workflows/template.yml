@@ -129,7 +129,7 @@ jobs:
               -H "Accept: application/vnd.github.package-deletes-preview+json" \
               -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
               -d '{"visibility": "public"}' \
-              "https://api.github.com/orgs/${{ github.repository_owner }}/packages/container/${package_name}"
+              "https://api.github.com/users/${{ github.repository_owner }}/packages/container/${package_name}"
 
             echo "Package ${package_name} is now public."
 
