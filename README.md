@@ -1,6 +1,9 @@
-# RCE Runtime Images
+# rce-images
 
-[![Systems Nightly](https://github.com/xosnrdev/rce-images/actions/workflows/systems-nightly.yml/badge.svg)](https://github.com/xosnrdev/rce-images/actions/workflows/systems-nightly.yml)
+[![Deprecated](https://img.shields.io/badge/status-deprecated-red)](https://github.com/ToolKitHub/rce-runner)
+
+> [!IMPORTANT]
+> This repo is deprecated and has been moved to [https://github.com/ToolKitHub/rce-images](https://github.com/ToolKitHub/rce-images)
 
 ## Overview
 
@@ -14,7 +17,7 @@ The [rce-runner](https://github.com/xosnrdev/rce-runner) is installed in each im
 
 ### Images
 
-Prebuilt images can be found on [Docker Hub](https://hub.docker.com/r/xosnrdev).
+Prebuilt images can be found on [Docker Hub](https://hub.docker.com/u/toolkithub).
 
 ## Example
 
